@@ -9,13 +9,13 @@
 
 #define XMAX 1200
 #define YMAX 700
-#define SPACESHIP_SPEED 20
+#define SPACESHIP_SPEED 40
 #define TOP 0
 #define RIGHT 1
 #define BOTTOM 2
 #define LEFT 3
 
-
+void SpaceshipCreate(int x, int y, bool isPlayer1, bool isPlayer2);
 GLint m_viewport[4];
 bool mButtonPressed = false;
 float mouseX, mouseY;
@@ -40,7 +40,7 @@ float xOne = 500, yOne = 0;
 float xTwo = 500, yTwo = 0;
 float xThree = 500, yThree = 0;
 
-bool laser1 = false, laser2 = false, laser3 = false;
+bool laser1 = false ,laser2 = false, laser3 = false;
 GLint CI = 0;
 GLfloat a[][3] = { 0,-50, 70,-50, 70,70, -70,70 };
 GLfloat LightColor[][2] = { 1,1,0,   0,1,1,   0,1,0 };
@@ -73,8 +73,8 @@ void init()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 						//define viewport size
-	gluOrtho2D(-1200, 1200, -700, 700);                   //<-----CHANGE THIS TO GET EXTRA SPACE
-//  gluOrtho2D(-200,200,-200,200);
+	gluOrtho2D(-1200, 1200, -700, 700);                  
+
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -82,19 +82,31 @@ void introScreen()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-		// Change this text colour depending on light/dark mode
+	glColor3f(1.0, 0.0, 0.0);
+	displayRasterText(-325, 490, 0.0, "RAINBOW BLAST");
 	glColor3f(1.0, 1.0, 1.0);
-	displayRasterText(-300, -550, 0.0, "Press ENTER to start the game");
+	displayRasterText(-500, 385, 0.0, "A game to help kids identify colours");
+	
+	glColor3f(1.0, 0, 0);
+	displayRasterText(-350, 170, 0.0, " STUDENT NAMES");
+	glColor3f(1.0, 1.0, 1.0);
+	displayRasterText(-250, 80, 0.0, " Faith Sanne");
+	displayRasterText(-250, 0, 0.0, " Grace Lihasi");
+	displayRasterText(-250, -80, 0.0, " Rees Alumasa");
+	// Change this text colour depending on light/dark mode
+	glColor3f(1.0, 0.7, 0.8);
+	displayRasterText(-400, -550, 0.0, "Press ENTER to start the game");
 	glFlush();
 	glutSwapBuffers();
 }
+
 
 void startScreenDisplay()
 {
 	glLineWidth(10);
 	//SetDisplayMode(MENU_SCREEN);
 
-	glColor3f(1, 0, 0);
+	glColor3f(1, 1, 1);
 	glBegin(GL_LINE_LOOP);               //Define menu Border
 	glVertex2f(-750, -500);
 	glVertex2f(-750, 550);
@@ -104,7 +116,7 @@ void startScreenDisplay()
 
 	glLineWidth(1);
 
-	glColor3f(1, 1, 0);
+	glColor3f(1, 1, 1);
 	glBegin(GL_POLYGON);				//START GAME PLOYGON
 	glVertex2f(-200, 300);
 	glVertex2f(-200, 400);
@@ -119,6 +131,7 @@ void startScreenDisplay()
 	glVertex2f(200, 50);
 	glEnd();
 
+	glColor3f(1, 0, 0);
 	glBegin(GL_POLYGON);				//QUIT POLYGON
 	glVertex2f(-200, -200);
 	glVertex2f(-200, -100);
@@ -129,7 +142,7 @@ void startScreenDisplay()
 			// simulate hovering
 	if (mouseX >= -100 && mouseX <= 100 && mouseY >= 150 && mouseY <= 200) {
 		
-		glColor3f(0, 0, 1);
+		glColor3f(1, 0, 0);
 		if (mButtonPressed) {
 			alienLife1 = alienLife2 = alienLife3 = 100;
 			viewPage = GAME;
@@ -142,7 +155,7 @@ void startScreenDisplay()
 	displayRasterText(-100, 340, 0.4, "Start Game");
 
 	if (mouseX >= -100 && mouseX <= 100 && mouseY >= 30 && mouseY <= 80) {
-		glColor3f(0, 0, 1);
+		glColor3f(1, 0, 0);
 		if (mButtonPressed) {
 			viewPage = INSTRUCTIONS;
 			printf("Instructions button pressed\n");
@@ -154,7 +167,7 @@ void startScreenDisplay()
 	displayRasterText(-120, 80, 0.4, "Instructions");
 
 	if (mouseX >= -100 && mouseX <= 100 && mouseY >= -90 && mouseY <= -40) {
-		glColor3f(0, 0, 1);
+		glColor3f(1, 1, 1);
 		if (mButtonPressed) {
 			mButtonPressed = false;
 			exit(0);
@@ -168,7 +181,7 @@ void startScreenDisplay()
 
 void backButton() {
 	if (mouseX <= -450 && mouseX >= -500 && mouseY >= -275 && mouseY <= -250) {
-		glColor3f(0, 0, 1);
+		glColor3f(1, 1, 1);
 		if (mButtonPressed) {
 			viewPage = MENU;
 			mButtonPressed = false;
@@ -186,24 +199,21 @@ void instructionsScreenDisplay()
 	//SetDisplayMode(MENU_SCREEN);
 	//colorBackground();
 	glColor3f(1, 0, 0);
-	displayRasterText(-900, 550, 0.4, "INSTRUCTIONS");
+	displayRasterText(-1100, 550, 0.4, "INSTRUCTIONS");
 	glColor3f(1, 0, 0);
-	displayRasterText(-1000, 400, 0.4, "PLAYER 1");
-	displayRasterText(200, 400, 0.4, "PLAYER 2");
+	
+	displayRasterText(-1100, 400, 0.4, "PLAYER KEYS");
 	glColor3f(1, 1, 1);
 	displayRasterText(-1100, 300, 0.4, "Key 'w' to move up.");
 	displayRasterText(-1100, 200, 0.4, "Key 's' to move down.");
 	displayRasterText(-1100, 100, 0.4, "Key 'd' to move right.");
 	displayRasterText(-1100, 0, 0.4, "Key 'a' to move left.");
-	displayRasterText(100, 300, 0.4, "Key 'i' to move up.");
-	displayRasterText(100, 200, 0.4, "Key 'k' to move down.");
-	displayRasterText(100, 100, 0.4, "Key 'j' to move right.");
-	displayRasterText(100, 0, 0.4, "Key 'l' to move left.");
+
 	displayRasterText(-1100, -100, 0.4, "Key 'c' to shoot, Use 'w' and 's' to change direction.");
-	displayRasterText(100, -100, 0.4, "Key 'm' to shoot, Use 'i' and 'k' to change direction.");
+
 	//displayRasterText(-1100 ,-100 ,0.4 ,"The packet can be placed only when 's' is pressed before.");
-	displayRasterText(-1100, -300, 0.4, "The Objective is to kill your opponent.");
-	displayRasterText(-1100, -370, 0.4, "Each time a player gets shot, LIFE decreases by 5 points.");
+	displayRasterText(-1100, -300, 0.4, "The Objective is to shoot your opponent of a given colour and Save the galaxy");
+	displayRasterText(-1100, -370, 0.4, "Each time a gets the correct alien gets shot, LIFE decreases by 5 points.");
 	backButton();
 	//if(previousScreen)
 	//	nextScreen = false ,previousScreen = false; //as set by backButton()
@@ -214,12 +224,11 @@ void DrawAlienBody(bool isPlayer1,bool isPlayer2)
 	if (isPlayer1)
 		glColor3f(0, 1, 0); //Green Alien Player 1
 	else if(isPlayer2)
-		glColor3f(1, 1, 0);		//Yellow  Alien Player 2
+		glColor3f(1, 1, 0);	//Yellow  Alien Player 2
 	else 
 		glColor3f(1, 0, 0); //Red alien player 3
 
 
-				//??????
 	glBegin(GL_POLYGON);
 	for (int i = 0; i <= 8; i++)
 		glVertex2fv(AlienBody[i]);
@@ -325,11 +334,12 @@ void DrawAlien(bool isPlayer1,bool isPlayer2)
 void DrawSpaceshipBody(bool isPlayer1, bool isPlayer2)
 {
 	if (isPlayer1)
-		glColor3f(1, 0, 0.5);	
-	else if(isPlayer2)
 		glColor3f(1.0, 0.0, 0.5);//BASE
+	else if(isPlayer2)
+		glColor3f(0, 1, 0.5);
+		
 	else
-		glColor3f(1, 0, 0.5);
+		glColor3f(0, 1, 0.5);//BASE
 
 	glPushMatrix();
 	glScalef(70, 20, 1);
@@ -400,18 +410,15 @@ void DrawLaser(int x, int y, bool dir[]) {
 	glColor3f(1, 0, 0);
 	glBegin(GL_LINES);
 	glVertex2f(x, y);
-	glVertex2f(xend, yend);
+	glVertex2f(-xend+250, -yend);
 	glEnd();
-	//glPopMatrix();
+
+	
 }
 
 void SpaceshipCreate(int x, int y, bool isPlayer1, bool isPlayer2) {
 	glPushMatrix();
 	glTranslated(x, y, 0);
-	// if(!checkIfSpaceShipIsSafe() && alienLife1 ){
-	// 	alienLife1-=10;
-	// 	xStart -= 23;
-	// }
 	DrawSpaceshipDoom();
 	glPushMatrix();
 	glTranslated(4, 19, 0);
@@ -419,10 +426,7 @@ void SpaceshipCreate(int x, int y, bool isPlayer1, bool isPlayer2) {
 	glPopMatrix();
 	DrawSteeringWheel();
 	DrawSpaceshipBody(isPlayer1,isPlayer2);
-	// DrawSpaceShipLazer();
-	// if(mButtonPressed) {
-	// 	DrawLazerBeam();
-	// }
+	
 	glEnd();
 	glPopMatrix();
 }
@@ -442,13 +446,15 @@ void DisplayHealthBar2() {
 	displayRasterText(800, 600, 0.4, temp2);
 	glColor3f(1, 0, 0);
 }
+
 void DisplayHealthBar3() {
-	char temp3[40];
-	glColor3f(1, 1, 1);
-	sprintf(temp3, "  LIFE = %d", alienLife3);
-	displayRasterText(-100, 600, 0.4, temp3);
+	char temp2[70];
+	glColor3f(0, 1, 0);
+	sprintf(temp2, " Shoot the Green Alien");
+	displayRasterText(-200, 600, 0.4, temp2);
 	glColor3f(1, 0, 0);
 }
+
 
 void checkLaserContact(int x, int y, bool dir[], int xp, int yp, bool player1, bool player2) {
 	int xend = -XMAX, yend = y;
@@ -474,15 +480,20 @@ void checkLaserContact(int x, int y, bool dir[], int xp, int yp, bool player1, b
 	printf("\nDisc: %f x: %d, y: %d, xp: %d, yp: %d", d, x, y, xp, yp);
 	if (d >= 0) {
 		if (player1)
-			alienLife1 -= 5;
-		else if (player2)
-			alienLife2 -= 5;
-		else
-			alienLife3 -= 5;
+			//when you shoot wrong colour
+			alienLife1 -= 10;
+		
+	}
+	else if (player2){
+		//when you shoot right colour
+		
+	   alienLife2 -= 20;
+	   alienLife1 += 10;
+}
 
 		printf("%d %d %d \n", alienLife1, alienLife2,alienLife3);
 	}
-}
+
 // Manipulate the arrangement of the Aliens on the screen 
 void gameScreenDisplay()
 {
@@ -491,11 +502,10 @@ void gameScreenDisplay()
 	DisplayHealthBar3();
 	glScalef(2, 2, 0);
 	glTranslatef(6, 0, 0);
-
 	if (alienLife1 > 0) {
 		SpaceshipCreate(xOne, yOne, true, false);
 		if (laser1) {
-			DrawLaser(xOne, yOne, laser1Dir);
+			//DrawLaser(xOne, yOne, laser1Dir);
 			checkLaserContact(xOne, yOne, laser1Dir, -xTwo, yTwo, true,false);
 		}
 	}
@@ -505,7 +515,7 @@ void gameScreenDisplay()
 
 	if (alienLife2 > 0) {
 		glPushMatrix();
-	glTranslatef(6, 150, 0);
+	glTranslatef(-1000, 0, 0);
 		SpaceshipCreate(xTwo, yTwo, false,true);
 		if (laser2) {
 			DrawLaser(xTwo, yTwo, laser2Dir);
@@ -523,9 +533,26 @@ void gameScreenDisplay()
 		glTranslatef(6, -150, 0);
 		SpaceshipCreate(xThree, yThree, false, false);
 		if (laser3) {
+			//DrawLaser(xThree, yThree, laser3Dir);
+			checkLaserContact(xThree, yThree, laser3Dir, -xTwo, yTwo, false, false);
+		}
+		glPopMatrix();
+	}
+	else {
+		viewPage = GAMEOVER;
+	}
+
+	if (alienLife3 > 0) {
+		glPushMatrix();
+
+
+		glTranslatef(6, 150, 0);
+		SpaceshipCreate(xThree, yThree, false, false);
+		/*if (laser3) {
 			DrawLaser(xThree, yThree, laser3Dir);
 			checkLaserContact(xThree, yThree, laser3Dir, -xTwo, yTwo, false, false);
 		}
+		*/
 		glPopMatrix();
 	}
 	else {
@@ -542,13 +569,13 @@ void displayGameOverMessage() {
 	glColor3f(1, 1, 0);
 	const char* message;
 	if (alienLife1 > 0)
-		message = "Game Over! Player 1 has won the game";
+		message = "Earth's Hero! You have eliminated the Green Aliens";
 			
 	
 	else 
-		message = "Game Over! Player 2 has won the game";
+		message = "Game Over! You lost the game and doomed earth!";
 
-		displayRasterText(-350, 600, 0.4, message);
+		displayRasterText(-250, 600, 0.4, message);
 	
 }
 
@@ -563,7 +590,7 @@ void keyOperations() {
 		laser1Dir[0] = laser1Dir[1] = false;
 		laser2Dir[0] = laser2Dir[1] = false;
 		laser3Dir[0] = laser3Dir[1] = false;
-		if (keyStates['c'] == true) {
+		if (keyStates['c'] == true || keyStates['p'] == true) {
 			laser2 = true;
 			if (keyStates['w'] == true) 	laser2Dir[0] = true;
 			if (keyStates['s'] == true) 	laser2Dir[1] = true;
@@ -643,12 +670,11 @@ void display()
 
 void passiveMotionFunc(int x, int y) {
 
-	//when mouse not clicked
-	mouseX = float(x) / (m_viewport[2] / 1200.0) - 600.0;  //converting screen resolution to ortho 2d spec
+	
+	mouseX = float(x) / (m_viewport[2] / 1200.0) - 600.0; 
 	mouseY = -(float(y) / (m_viewport[3] / 700.0) - 350.0);
 
-	//Do calculations to find value of LaserAngle
-	//somethingMovedRecalculateLaserAngle();
+	
 	glutPostRedisplay();
 }
 
@@ -681,7 +707,7 @@ int main(int argc, char** argv)
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(1200, 600);
-	glutCreateWindow("Space Shooter");
+	glutCreateWindow("RAINBOW BLAST");
 	init();
 	//glutReshapeFunc(reshape);
 	glutIdleFunc(refresh);
